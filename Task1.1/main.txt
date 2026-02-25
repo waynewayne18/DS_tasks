@@ -1,0 +1,43 @@
+We are going to develop a final degree calculation system for UWE.
+The main functionality of the system is to import required data and automatically calculate the 
+degree marks and bands. 
+The calculation is on the UWE Academic Regulations 23/24 as follows:
+The University based awards its degrees as follows:
+• First Class: 70% or higher.
+• Second Class (Upper Division) (2.1): 60% to less than 70%.
+• Second Class (Lower Division) (2.2): 50% to less than 60%.
+• Third Class: 40% to less than 50%.
+• A student who achieves less than 40% will fail.
+
+A student must have passed all modules from year one, two and three to get the degree in
+accordance with the Regulations.
+
+The following actions are taken to determine the degree classification:
+
+1. A student’s weighted average mark for Level 5 (year two) is calculated by selecting the 
+best marks across 100 credits at Level 5, multiplying the credit value of each module by the 
+percentage mark achieved for that module, and the sum of those results is then divided by the 
+total number of credits. Pass/fail modules are excluded from the calculation.
+
+2. A student’s weighted average mark for Level 6 (year three) is calculated by multiplying the
+credit value of each module by the percentage mark achieved for that module, and the sum of those
+results is then divided by the total number of credits. Pass/fail modules are excluded from the
+calculation.
+
+3. The final aggregate mark used for degree classification will comprise the weighted average %
+mark of Levels 6 and 5 weighted in the ratio 3:1. This means that the final aggregate % mark is
+calculated by multiplying the weighted average % mark of Level 6 by 3 and adding it to the
+weighted average % mark of Level 5 and dividing the result by 4.  
+
+We will use Computer Science names and codes, the other includes 300 students’
+module marks for three years. 
+Your system should be able to students’ results as the testing.
+Therefore, two csv files are provided; 
+one includes the module import these two files or the similar data from other courses, 
+and the calculated degree marks and related information should be saved in a file.
+
+Open file in write mode ('w')
+with open('output.txt', 'w') as file:
+    file.write("First line\n")
+    file.write("Second line\n")
+    file.write("Third line\n")final score is0.0for student0

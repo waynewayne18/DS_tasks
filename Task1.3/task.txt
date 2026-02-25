@@ -1,0 +1,22 @@
+You are invited to develop a route planning system for a railway logistic company. 
+This company is using the UK railway system to deliver cargo to a group of destinations (stations).
+However, it has a special policy that the container which carries the cargo can visit each
+destination once unless the start station and the last destination station are same. 
+
+For example, the company has an order to deliver one container of cargo to London, Oxford, Bristol,
+Birmingham and Exeter. The container starts from London and finally arrives Oxford. 
+Your job is to design a system to work out a route to finish the order by the lowest cost. 
+The cost and the route details including station names should be outputted or saved in a file.
+
+The company provides a csv file (railway_network.csv) which includes the direct connections of 
+the adjacent stations and their weights. For example, the tuple (Bristol Temple Meads, 
+Bristol Parkway, 10) denotes that the cost between the two stations is 10 for the either way. 
+This data is based on the existing national rail network that is provided as a PDF map. 
+Since there are too many stations in London, we have merged all these stations into ONE station 
+called ‘London’ in the provided csv file. That is, London is a hub to connect all lines from 
+different directions.
+
+Simply speaking, your program should import the railway station data, and it can take a group of 
+stations with the start and destination stations and return the lowest cost with the route of 
+visiting these stations. Note that each station can be visited once except that the start and 
+destination stations are same.

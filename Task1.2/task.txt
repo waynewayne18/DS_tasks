@@ -1,0 +1,32 @@
+Activity 1.2: (25%) Password Generator
+Suppose you are a skilled hacker and are going to crack a password by a brute force attack 
+(an attempt to try every possible password). Fortunately, you have obtained the partial 
+knowledge about the composition of the passwords, which can reduce the number of the potential 
+passwords significantly.
+
+A valid password consists of the elements from a set of capital letters {A, B, C, D,  E},
+a set of lower-case letters {a, b, c, d, e}, a set of digits {1, 2, 3, 4, 5} and a set of 
+special symbols {$, &, %}. However, a collection of rules for composing a valid password are
+also gained as follows:
+•   it must include at least one element from each category;
+•	it must start with letters (capital or lower-case);
+•	it must not include more than two capital letters;
+•	it must not include more than two special symbols.
+
+You task is to write a Python program, which takes a given number as the password length,
+and output all valid passwords (including indices) with the given length. For example, if the 
+given length is 4, your program may return the follow result:
+1 Aa1$   
+2 Ba1$    
+3 Ca1$ 
+… 
+
+These sets (letters, digits, and special symbols) can be hard-coded or read in if you prefer,
+but the given length should be read in from the console for the easy testing. 
+The generated passwords should be saved in a file.
+
+Ideas:
+go through all like padlock, true bru 5teforce
+password must have at least 4 chars     
+index[0] always in first 0-9 of the set array
+only allow index[0] - [5] if capCounter <= 2, allow index[15] - [17] if specCounter <= 2
