@@ -20,8 +20,8 @@ with open("output.txt", "a") as file:
     for a in product(set, repeat = chars):
         curr_pass = "".join(a)#used all any for speed and swag
 
-        if all(any(i in curr_pass for i in s) for s in [CAPs, lower, num, spec]):#embed if for read
-            if sum(curr_pass.count(d) for d in CAPs) <=2 and sum(curr_pass.count(b) for b in spec) <=2:
-                if a[0] in CAPs:
+        if all(any(i in curr_pass for i in s) for s in [CAPs, lower, num, spec]):#embed if for read 
+            if sum(curr_pass.count(d) for d in CAPs) <=2 and sum(curr_pass.count(b) for b in spec) <=2: #if caps and spec < 2
+                if a[0] in CAPs or a[0] in lower:
                     file.write(curr_pass)
                     file.write("\n")
