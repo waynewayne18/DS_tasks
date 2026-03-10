@@ -1,0 +1,8 @@
+t1: Task1.1/main.py
+	python main.py
+
+t2: Task1.2/bbf.py
+	python bbf.py
+
+t3: Task1.3/Dijkstrasrailway.py
+	python Dijkstrasrailway.py

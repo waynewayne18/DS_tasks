@@ -1,11 +1,8 @@
 import re
 from operator import index
 import pandas as pd
-import csv
 
 marks = pd.read_csv("activity1_1_marks.csv", header = None)
-modules = pd.read_csv("cs_modules.csv", header = None)
-
 failed = 0
 final_score = 0
 
