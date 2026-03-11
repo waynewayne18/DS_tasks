@@ -9,12 +9,8 @@ origin = rails.iloc[:, 0]
 desti = rails.iloc[:, 1]
 ori_to_dest = rails.iloc[:, 2]
 dest_to_ori = rails.iloc[:, 3]
-heap = []
-heapq.heapify(heap)
 
 rw_dict = defaultdict(dict)
-unvisited = []
-visited = []
 
 def addNodes(rw_dict, index):
     rw_dict[str(origin[index]).lower()][str(desti[index]).lower()] = ori_to_dest[index]
@@ -23,8 +19,13 @@ def addNodes(rw_dict, index):
 #print (json.dumps(dict(rw_dict), indent=4))
 
 def dijkstra(start):
-    start = start
+    heap = []
+    visited = []
+    unvisited = []
     current = start
+    fill_unvisited(unvisited)
+    rw_dict[start][start] = 0 #added cost orig -> orig = 0 so prev node cost + node cost works for first pass
+
     while len(visited) < len(unvisited):
         if current not in visited:
             visited.append(current)
@@ -36,17 +37,16 @@ def dijkstra(start):
             if node[1] not in rw_dict[start] or (node[0] < rw_dict[start][node[1]]):
                 if node[1] in rw_dict[current]:
                     rw_dict[start][node[1]] =  node[0]
-
         #print("visited", len(visited))
-
         c, current =heapq.heappop(heap)
         #print("current", current)
     return -1
 
-for i in range(len(origin)):
-    if origin[i] not in unvisited:
-        unvisited.append(origin[i])
-        
+def fill_unvisited(unvisited):
+    for i in range(len(origin)):
+        if origin[i] not in unvisited:
+            unvisited.append(origin[i])
+
 for i in range(len(origin)):
     addNodes(rw_dict, i)
 
@@ -76,7 +76,14 @@ while 1 == 1:
             print("enter valid station, check spelling and try again")
     tv_middle.append(between)
 
-print(rw_dict["London"])
-rw_dict[tv_origin][tv_origin] = 0 #added cost orig -> orig = 0 so line 68 works
 dijkstra(tv_origin)
-print (rw_dict[tv_origin])
+#print(rw_dict[tv_origin])
+for mid_stat in tv_middle:
+    if mid_stat not in rw_dict[tv_origin]:
+        print("middle station ", mid_stat ,  " is not connected to start station, aborting")
+        exit()
+    else:
+        dijkstra(mid_stat)
+        #print(rw_dict[mid_stat])
+dijkstra(tv_desti)
+print(rw_dict[tv_desti])
