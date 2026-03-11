@@ -4,7 +4,8 @@ import heapq
 
 rails = pd.read_csv("activity1_3_railnetwork_data.csv", header = None)
 
-tv_middle = []
+middle_dicts = []
+middle_nodes = []
 origin = rails.iloc[:, 0]
 desti = rails.iloc[:, 1]
 ori_to_dest = rails.iloc[:, 2]
@@ -16,7 +17,13 @@ def addNodes(rw_dict, index):
     rw_dict[str(origin[index]).lower()][str(desti[index]).lower()] = ori_to_dest[index]
     rw_dict[str(desti[index]).lower()][str(origin[index]).lower()] = dest_to_ori[index]
     return -1
-#print (json.dumps(dict(rw_dict), indent=4))
+#print (json.dumps 
+def fill_unvisited(unvisited):
+    for i in range(len(origin)):
+        if origin[i] not in unvisited:
+            unvisited.append(origin[i])
+        if desti[i] not in unvisited:
+            unvisited.append(desti[i])
 
 def dijkstra(start):
     heap = []
@@ -25,27 +32,36 @@ def dijkstra(start):
     current = start
     fill_unvisited(unvisited)
     rw_dict[start][start] = 0 #added cost orig -> orig = 0 so prev node cost + node cost works for first pass
-
-    while len(visited) < len(unvisited):
+    print(start)
+    print(len(unvisited))
+    print(len(visited))
+    while len(visited) < len(unvisited) - 1:
         if current not in visited:
             visited.append(current)
         for nx_node in rw_dict[current]:
             if nx_node not in visited:
-                heapq.heappush(heap, (rw_dict[current][nx_node] + rw_dict[start][current], nx_node)) #node[0] is cost, [1] is station 
-        for node in heap:
+                if (rw_dict[current][nx_node] + rw_dict[start][current], nx_node) not in heap:
+                    heapq.heappush(heap, (rw_dict[current][nx_node] + rw_dict[start][current], nx_node)) #node[0] is cost, [1] is station 
+        for node in heap:#can probably be optimised by only checking the new nodes added to the heap instead of the whole heap every time, 
             #print (node)
             if node[1] not in rw_dict[start] or (node[0] < rw_dict[start][node[1]]):
                 if node[1] in rw_dict[current]:
                     rw_dict[start][node[1]] =  node[0]
         #print("visited", len(visited))
-        c, current =heapq.heappop(heap)
+        print(len(visited)) 
+        print(len(heap))#num goes to 12k+ on oxford very erroneous
+        print(start)
+        if len(heap) > 0:
+            c, current =heapq.heappop(heap)
         #print("current", current)
     return -1
 
-def fill_unvisited(unvisited):
-    for i in range(len(origin)):
-        if origin[i] not in unvisited:
-            unvisited.append(origin[i])
+def TSP(start, end, middles):
+    best_cost = 99999999999999999999
+    best_path = []
+    
+    
+    return -1
 
 for i in range(len(origin)):
     addNodes(rw_dict, i)
@@ -74,16 +90,24 @@ while 1 == 1:
             break
         else:
             print("enter valid station, check spelling and try again")
-    tv_middle.append(between)
+    middle_nodes.append(between)
 
 dijkstra(tv_origin)
-#print(rw_dict[tv_origin])
-for mid_stat in tv_middle:
+for i, mid_stat in enumerate(middle_nodes):
     if mid_stat not in rw_dict[tv_origin]:
         print("middle station ", mid_stat ,  " is not connected to start station, aborting")
         exit()
     else:
         dijkstra(mid_stat)
-        #print(rw_dict[mid_stat])
+        middle_dicts.append(rw_dict[mid_stat])
 dijkstra(tv_desti)
+origin_dict = rw_dict[tv_origin]
+desti_dict = rw_dict[tv_desti]
+
+print(rw_dict[tv_origin])
+print("------------------")
 print(rw_dict[tv_desti])
+print("------------------")
+print(middle_dicts) 
+
+TSP(tv_origin, tv_desti, middle_nodes)
