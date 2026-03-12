@@ -1,7 +1,7 @@
 from collections import defaultdict
 import pandas as pd
 import heapq
-
+from itertools import permutations
 rails = pd.read_csv("activity1_3_railnetwork_data.csv", header = None)
 
 middle_dicts = []
@@ -32,9 +32,6 @@ def dijkstra(start):
     current = start
     fill_unvisited(unvisited)
     rw_dict[start][start] = 0 #added cost orig -> orig = 0 so prev node cost + node cost works for first pass
-    print(start)
-    print(len(unvisited))
-    print(len(visited))
     while len(visited) < len(unvisited) - 1:
         if current not in visited:
             visited.append(current)
@@ -48,19 +45,37 @@ def dijkstra(start):
                 if node[1] in rw_dict[current]:
                     rw_dict[start][node[1]] =  node[0]
         #print("visited", len(visited))
-        print(len(visited)) 
-        print(len(heap))#num goes to 12k+ on oxford very erroneous
-        print(start)
+        #print(len(heap))num goes high on oxford very erratic
         if len(heap) > 0:
             c, current =heapq.heappop(heap)
         #print("current", current)
     return -1
 
 def TSP(start, end, middles):
-    best_cost = 99999999999999999999
+    best_cost = int(99999999999999)
     best_path = []
-    
-    
+    printed_path = []
+    perms = permutations(middles)
+    for perm in perms:
+        cost = 0
+        for i in range(len(perm) - 1):
+            cost += rw_dict[perm[i]][perm[i+1]]
+        cost += rw_dict[start][perm[0]] + rw_dict[perm[len(perm) - 1]][end]
+        if cost < best_cost:
+            best_path.clear()
+            best_cost = cost
+            best_path.append(start)
+            for loca in perm:
+                best_path.append(loca)
+            best_path.append(end)
+    for index, i in enumerate(best_path):
+        if index < len(best_path ) - 1:
+            printed_path.append(i)
+            printed_path.append(" -> ")
+        else:
+            printed_path.append(i)
+    print("best path: ", printed_path)
+    print("cost:", best_cost)
     return -1
 
 for i in range(len(origin)):
@@ -104,10 +119,10 @@ dijkstra(tv_desti)
 origin_dict = rw_dict[tv_origin]
 desti_dict = rw_dict[tv_desti]
 
-print(rw_dict[tv_origin])
-print("------------------")
-print(rw_dict[tv_desti])
-print("------------------")
-print(middle_dicts) 
+#print(rw_dict[tv_origin])
+#print("------------------")
+#print(rw_dict[tv_desti])
+#print("------------------")
+#print(middle_dicts) 
 
 TSP(tv_origin, tv_desti, middle_nodes)
