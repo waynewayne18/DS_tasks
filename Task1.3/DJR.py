@@ -74,7 +74,7 @@ def TSP(start, end, middles):
             printed_path.append(" -> ")
         else:
             printed_path.append(i)
-    print("best path: ", printed_path)
+    print("best path: ", *printed_path)
     print("cost:", best_cost)
     return -1
 
