@@ -1,0 +1,56 @@
+A company needs your help to develop a new program with parallel programming to significantly
+increase the efficiency of its legacy program. The provided program uses the ‘face_recognition’
+library to search one image from a set of unknown images (which can be found in the imageset
+folder) with a known face. Note that there is only one image in the dataset which contains the
+given known face.
+However, this legacy program can support the serial search only. Since the company has more CPU
+resources, it requires you to develop a parallelised program to speed up the searching process.
+The serial program (activity1_4_serial.py) is provided, and you should modify it into a program with
+TRUE parallelism. Efficiency and memory space are the major concerns for the marking criteria
+
+--------------------------------------------------------------------------------
+
+Stage 0 — Loading Known Faces Database. ThreadPoolExecutorDisk I/O releases GIL — threads genuinely overlap
+This happens once before anything else. Every image in your known faces folder gets loaded, detected, 
+and encoded into 128-number vectors. These vectors get stacked into a single matrix that stays in RAM
+for the entire run. This is a one-time cost — the larger your known faces database the longer this 
+takes, but it only happens once regardless of how many images you scan. Memory cost is negligible
+since encodings are tiny.
+
+Stage 1 — Image Generator asyncio + aiofiles. less efficient: ThreadPoolExecutorDisk I/O releases GIL — threads genuinely overlap
+Rather than loading all 200 images into RAM simultaneously, the generator loads one batch of 32 at a 
+time. It uses a thread pool to load those 32 images in parallel since loading from disk releases 
+Python's GIL, meaning threads genuinely overlap. Once a batch is handed off to the next stage, the 
+generator waits before loading the next one. This keeps RAM flat at around 200MB rather than spiking 
+to over 1GB. The speed cost of batching versus loading everything at once is minimal — roughly half 
+a second across the entire run.
+
+Stage 2 — Face Encoding multiprocessing.Pool, torch GPU direct. multiprocessing.Pooltorch.multiprocessing (no GPU)
+This is the most expensive step. Using the bounding box coordinates from detection, the encoder zooms 
+into each face region and runs it through a neural network that compresses the face into exactly 128 
+numbers. These 128 numbers mathematically represent the unique geometry of that face — distances 
+between eyes, nose shape, jaw line and so on. Two photos of the same person produce very similar 
+128-number vectors. Two different people produce very different ones. The raw image is no longer 
+needed after encoding, which is why garbage collection at the end of each batch recovers significant
+RAM.
+
+Stage 3 — Face Matching NumPy FAISS. FAISS best
+Each unknown 128-number vector gets compared against every row in the known faces matrix simultaneously
+using NumPy. Rather than looping through known faces one by one, NumPy subtracts the entire matrix 
+from the unknown vector in a single C-level operation and computes distances all at once. The closest 
+match below a threshold of 0.6 is declared a match. Above 0.6 is declared unknown. This stage is so 
+fast it barely registers in the total time — around 0.02 seconds for all 200 images combined 
+regardless of how many known faces you have.
+
+Stage 4 — Cleanup
+After each batch is fully processed, the raw image arrays, detection coordinates, and encoding
+dictionaries for that batch are explicitly deleted. Python's garbage collector is then forced to run 
+immediately rather than waiting. If a GPU is present, its cache is also cleared. This is what keeps 
+RAM flat across all batches — without this step memory would grow with each batch and eventually 
+crash on large folders.
+
+---------------------------------------------------------------------------------------------
+
+asyncio over ThreadPoolExecutor  → matters at 1000+ images
+torch over Pool                  → matters always, significant memory saving
+FAISS over NumPy                 → matters at 500+ known faces
